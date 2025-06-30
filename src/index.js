@@ -4,13 +4,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Posts } from './pages/posts';
+import { PostsPage } from './pages/posts';
 import { Root } from './components/Root';
-import { EditPost } from './pages/posts/edit';
-import { DetailPost } from './pages/posts/detail';
-import { AddPost } from './pages/posts/add';
-import { Auth } from './pages/auth';
-import { Register } from './pages/register';
+import { EditPostPage } from './pages/posts/edit';
+import { DetailPostPage } from './pages/posts/detail';
+import { AddPostPage } from './pages/posts/add';
+import { AuthPage } from './pages/auth';
+import { RegistrationPage } from './pages/registration';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
 
@@ -25,27 +25,27 @@ const router = createBrowserRouter([
       },
       {
         path:"posts",
-        element: <Posts/>,
+        element: <PostsPage/>,
       },
       {
         path:"posts/:id",
-        element: <DetailPost/>,
+        element: <DetailPostPage/>,
       },
       {
         path:"posts/:id/edit",
-        element: <EditPost/>,
+        element: <EditPostPage/>,
       },
       {
         path:"posts/add",
-        element: <AddPost/>,
+        element: <AddPostPage/>,
       },
       {
         path:"auth",
-        element: <Auth/>,
+        element: <AuthPage/>,
       },
       {
-        path:"register",
-        element: <Register/>,
+        path:"registration",
+        element: <RegistrationPage/>,
       }
     ]
   }
