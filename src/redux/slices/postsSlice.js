@@ -1,79 +1,93 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { postsAPI } from "../../api/postsAPI";
 
 const initialState = {
-    list: [
-        {
-            id: 7,
-            title: 'Post 7',
-            image: 'https://avatars.mds.yandex.net/get-yapic/29310/RJsfWQOtUOe0TfYz45DAiQ4gd0-1/orig',
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate libero praesentium excepturi facilis inventore repellendus accusamus quibusdam officia labore exercitationem quod qui obcaecati veniam, soluta error officiis dicta tempore eum."
-        },
-        {
-            id: 6,
-            title: 'Post 6',
-            image: 'https://avatars.mds.yandex.net/get-yapic/29310/RJsfWQOtUOe0TfYz45DAiQ4gd0-1/orig',
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate libero praesentium excepturi facilis inventore repellendus accusamus quibusdam officia labore exercitationem quod qui obcaecati veniam, soluta error officiis dicta tempore eum."
-        },
-        {
-            id: 5,
-            title: 'Post 5',
-            image: 'https://avatars.mds.yandex.net/get-yapic/29310/RJsfWQOtUOe0TfYz45DAiQ4gd0-1/orig',
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate libero praesentium excepturi facilis inventore repellendus accusamus quibusdam officia labore exercitationem quod qui obcaecati veniam, soluta error officiis dicta tempore eum."
-        },
-        {
-            id: 4,
-            title: 'Post 4',
-            image: 'https://avatars.mds.yandex.net/get-yapic/29310/RJsfWQOtUOe0TfYz45DAiQ4gd0-1/orig',
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate libero praesentium excepturi facilis inventore repellendus accusamus quibusdam officia labore exercitationem quod qui obcaecati veniam, soluta error officiis dicta tempore eum."
-        },
-        {
-            id: 3,
-            title: 'Post 3',
-            image: 'https://avatars.mds.yandex.net/get-yapic/29310/RJsfWQOtUOe0TfYz45DAiQ4gd0-1/orig',
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate libero praesentium excepturi facilis inventore repellendus accusamus quibusdam officia labore exercitationem quod qui obcaecati veniam, soluta error officiis dicta tempore eum."
-        },
-        {
-            id: 2,
-            title: 'Post 2',
-            image: 'https://avatars.mds.yandex.net/get-yapic/29310/RJsfWQOtUOe0TfYz45DAiQ4gd0-1/orig',
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate libero praesentium excepturi facilis inventore repellendus accusamus quibusdam officia labore exercitationem quod qui obcaecati veniam, soluta error officiis dicta tempore eum."
-        },
-        {
-            id: 1,
-            title: 'Post 1',
-            image: 'https://avatars.mds.yandex.net/get-yapic/29310/RJsfWQOtUOe0TfYz45DAiQ4gd0-1/orig',
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate libero praesentium excepturi facilis inventore repellendus accusamus quibusdam officia labore exercitationem quod qui obcaecati veniam, soluta error officiis dicta tempore eum."
-        },
-    ],
-    postForView: null,
-    freshPosts: null
+    posts: {
+        list: null,
+        loading: false
+    },
+    postForView: {
+        post: null,
+        loading: false
+    },
+    freshPosts: {
+        posts: null,
+        loading: false
+    }
 }
 
+ export const getPostById = createAsyncThunk(
+    "posts/fetchById",
+    async (postId) => {
+        return await postsAPI.fetchById(postId)
+    }
+)
+
+ export const getPosts = createAsyncThunk(
+    "posts/fetchPosts",
+    async () => {
+        return await postsAPI.fetchPosts()
+    }
+)
+
+ export const getFreshPosts = createAsyncThunk(
+    "posts/fetchFreshPosts",
+    async (limit) => {
+        return await postsAPI.fetchFreshPosts(limit)
+    }
+)
 
 export const postsSlice = createSlice({
     name: 'posts',
     initialState,
     reducers:{
-        setPosts: (state, action) => {
-            state.list = action.payload
-        },
-        editPost: (state, actoin) => {
-
-        },
-        getPost: (state, action) => {
-            state.postForView = state.list.find((item) => item.id === action.payload)
-            
-        },
-        getFreshPosts: (state) => {
-            state.freshPosts = state.list.slice(0,3)
+        editPost: (state, actoin) => { 
 
         },
         addPost: (state, action) => {
             
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getPostById.pending,(state, action) => {
+            state.postForView = {
+               post: null,
+               loading: true
+            }
+        })
+        builder.addCase(getPostById.fulfilled,(state, action) => {
+            state.postForView = {
+               post: action.payload,
+               loading: false
+            }
+        })
+        builder.addCase(getPosts.pending,(state, action) => {
+            state.posts = {
+               list: null,
+               loading: true
+            }
+        })
+        builder.addCase(getPosts.fulfilled,(state, action) => {
+            state.posts = {
+               list: action.payload,
+               loading: false
+            }
+        })
+        builder.addCase(getFreshPosts.pending,(state, action) => {
+            state.freshPosts = {
+               posts: null,
+               loading: true
+            }
+        })
+        builder.addCase(getFreshPosts.fulfilled,(state, action) => {
+            state.freshPosts = {
+               posts: action.payload,
+               loading: false
+            }
+        })
     }
 })
 
-export const {setPosts, editPost, getPost, addPost, getFreshPosts} = postsSlice.actions
+export const { editPost, addPost} = postsSlice.actions
 
 export default postsSlice.reducer
