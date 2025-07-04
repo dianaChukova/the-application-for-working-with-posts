@@ -24,7 +24,7 @@ export const DetailPostPage = () => {
         return<>Пост не найден</>
     }
 
-    const {post } = postForView
+    const { post } = postForView
 
     const image = post.image || "https://i.pinimg.com/736x/b2/1a/9f/b21a9ff51a2b511b3680603887147f01.jpg"
 
