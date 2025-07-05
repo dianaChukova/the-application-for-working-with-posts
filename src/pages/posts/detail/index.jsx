@@ -5,16 +5,24 @@ import { Typo } from "../../../components/Typo"
 import { Container } from "../../../components/Container/styles"
 import { Link } from "../../../components/Link"
 import * as SC from "./styles"
-import { getPostById } from "../../../redux/slices/postsSlice"
+import { getPostById, showPost } from "../../../redux/slices/postsSlice"
 
 export const DetailPostPage = () => {
     const { id } = useParams()
+    const {list} = useSelector((state) => state.posts.posts)
     const postForView = useSelector((state) => state.posts.postForView)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(getPostById(Number(id)))
-    }, [id])
+        const intId = Number(id)
+        const findedPosts = list ? list.find((item) => item.id === intId) : undefined
+
+        if (findedPosts) {
+            dispatch(showPost(findedPosts))
+        } else {
+            dispatch(getPostById(intId))
+        }
+    }, [id, list, dispatch])
 
      if(postForView.loading) {
         return<Container>Загрузка...</Container>
