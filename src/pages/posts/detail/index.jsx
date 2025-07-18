@@ -10,10 +10,16 @@ import { getPostById, showPost, deletePost } from "../../../redux/slices/postsSl
 export const DetailPostPage = () => {
     const { id } = useParams()
     const {list} = useSelector((state) => state.posts.posts)
-    const postForView = useSelector((state) => state.posts.postForView)
+    const { user } = useSelector((state) => state.auth)
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    const postForView = useSelector((state) => state.posts.postForView)
     const [postForDelete, setPostForDelete] = useState(null)
+   
+
+    const showEditAndDeleteBtn = list && user
 
     const onDeletePost = () => {
         setPostForDelete(null)
@@ -63,8 +69,8 @@ export const DetailPostPage = () => {
         <div style={{clear: "both"}}/>
         <SC.LinkWrapper>
             <Link to="/posts/">Назад</Link>
-            {list && <Link to={`/posts/${post.id}/edit`}>Редактировать пост</Link>}
-            {list && <SC.DeleteButton onClick={() => setPostForDelete(post)}>Удалить</SC.DeleteButton>}
+            {showEditAndDeleteBtn && <Link to={`/posts/${post.id}/edit`}>Редактировать пост</Link>}
+            {showEditAndDeleteBtn && <SC.DeleteButton onClick={() => setPostForDelete(post)}>Удалить</SC.DeleteButton>}
         </SC.LinkWrapper>
     </Container> 
 }
