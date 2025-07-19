@@ -5,6 +5,7 @@ import { Form } from "../../components/ui/Form";
 import { Field } from "../../components/ui/Field";
 import { Input } from "../../components/ui/Input";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/ui/Button";
 
 export const RegistrationPage = () => {
     const [formValues, setFormvalues] = useState({name: "" , surname: "", email: "", password: ""})
@@ -87,7 +88,7 @@ export const RegistrationPage = () => {
                         placeholder="Пароль"
                     />
                 </Field>
-                <button type="submit" disabled= {disabled}>Зарегистрироваться</button>
+                <Button type="submit" disabled= {disabled}>Зарегистрироваться</Button>
             </Form>
         </Container>
     )
