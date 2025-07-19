@@ -6,6 +6,12 @@ import { Container } from "../../../components/ui/Container"
 import { Link } from "../../../components/ui/Link"
 import * as SC from "./styles"
 import { getPostById, showPost, deletePost } from "../../../redux/slices/postsSlice"
+import { ModalWrapper } from "../../../components/ui/Modal/ModalWrapper"
+import { Modal } from "../../../components/ui/Modal/Modal"
+import { ModalText } from "../../../components/ui/Modal/ModalText"
+import { ModalContent } from "../../../components/ui/Modal/ModalContent"
+import { Button } from "../../../components/ui/Button"
+import { Loader } from "../../../components/ui/Loader"
 
 export const DetailPostPage = () => {
     const { id } = useParams()
@@ -40,7 +46,9 @@ export const DetailPostPage = () => {
     }, [id, list, dispatch])
 
      if(postForView.loading) {
-        return<Container>Загрузка...</Container>
+        return<Container>
+            <Loader />
+        </Container>
     }
 
     if(!postForView.post || !postForView.post.hasOwnProperty("id")) {
@@ -53,15 +61,15 @@ export const DetailPostPage = () => {
 
     return<Container>
         { postForDelete &&
-            <SC.ModalWrapper>
-                <SC.Modal>
-                    <SC.ModalText>Вы уверены, что хотите удалить этот пост (id-{postForDelete.id})?</SC.ModalText>
-                    <SC.ModalContent>
-                        <button onClick={() => setPostForDelete(null)}>Нет</button>
+            <ModalWrapper>
+                <Modal>
+                    <ModalText>Вы уверены, что хотите удалить этот пост (id-{postForDelete.id})?</ModalText>
+                    <ModalContent>
+                        <Button onClick={() => setPostForDelete(null)}>Нет</Button>
                         <SC.DeleteButton onClick={onDeletePost}>Да</SC.DeleteButton>
-                    </SC.ModalContent>
-                </SC.Modal>
-            </SC.ModalWrapper>
+                    </ModalContent>
+                </Modal>
+            </ModalWrapper>
         }
         <Typo>{post.title}</Typo>
         <SC.Image src={image} alt={post.title}/>

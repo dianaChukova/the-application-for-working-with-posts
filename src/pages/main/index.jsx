@@ -4,6 +4,7 @@ import { Typo } from "../../components/ui/Typo";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getFreshPosts } from "../../redux/slices/postsSlice";
+import { Loader } from "../../components/ui/Loader";
 
 export const MainPage = () => {
     const dispatch = useDispatch()
@@ -16,7 +17,8 @@ export const MainPage = () => {
 
     return <>
             <Container>
-                {loading && <>Загрузка...</>}
+                {/* {loading && <>Загрузка...</>} */}
+                {loading && (<Loader Загрузка/>)}
                 {posts && 
                     <>
                         <Typo>Новые публикации</Typo>
