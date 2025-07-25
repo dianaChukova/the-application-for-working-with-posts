@@ -40,48 +40,74 @@ const initialState = {
 export const postsSlice = createSlice({
     name: 'posts',
     initialState,
-    reducers:{
-        editPost: (state, actoin) => { 
-            state.posts.list = state.posts.list.map((post) => {
-                if (post.id === actoin.payload.id) {
-                    return actoin.payload
+    reducers: {
+        editPost: (state, action) => {
+            const updatedPost = action.payload
+            ['list', 'posts'].forEach(key => {
+                if (state.posts[key]) {
+                    state.posts[key] = state.posts[key].map(post => 
+                        post.id === updatedPost.id ? updatedPost : post
+                    )
                 }
-                return post
             })
+            
+            if (state.postForView.post?.id === updatedPost.id) {
+                state.postForView.post = updatedPost
+            }
         },
+        
         addPost: (state, action) => {
-            const newPost = {...action.payload}
-            newPost.id = new Date().getTime()
-            state.posts.list =  state.posts.list ? [newPost, ...state.posts.list] : [newPost]
+            const newPost = {
+                ...action.payload,
+                id: new Date().getTime()
+            }
+            
+            if (state.posts.list) {
+                state.posts.list = [newPost, ...state.posts.list]
+            }
+            if (state.freshPosts.posts) {
+                state.freshPosts.posts = [newPost, ...state.freshPosts.posts]
+            }
         },
+        
         showPost: (state, action) => {
             state.postForView = {
-               post: action.payload,
-               loading: false
+                post: action.payload,
+                loading: false
             }
         },
+        
         deletePost: (state, action) => {
-            state.posts.list = state.posts.list.filter((post) => post.id !== action.payload.id)
+            const postId = action.payload.id
             
-            state.postForView = {
-               post: null,
-               loading: false
+            if (state.posts.list) {
+                state.posts.list = state.posts.list.filter(post => post.id !== postId)
             }
-        },
+            if (state.freshPosts.posts) {
+                state.freshPosts.posts = state.freshPosts.posts.filter(post => post.id !== postId)
+            }
+            
+            if (state.postForView.post?.id === postId) {
+                state.postForView = {
+                    post: null,
+                    loading: false
+                }
+            }
+        }
     },
+    
     extraReducers: (builder) => {
-        builder.addCase(getPostById.pending,(state, action) => {
+        builder.addCase(getPostById.pending, (state) => {
+            state.postForView.loading = true
+        })
+        
+        builder.addCase(getPostById.fulfilled, (state, action) => {
             state.postForView = {
-               post: null,
-               loading: true
+                post: action.payload,
+                loading: false
             }
         })
-        builder.addCase(getPostById.fulfilled,(state, action) => {
-            state.postForView = {
-               post: action.payload,
-               loading: false
-            }
-        })
+        
         builder.addCase(getPosts.pending,(state, action) => {
             state.posts = {
                list: null,
@@ -107,8 +133,8 @@ export const postsSlice = createSlice({
             }
         })
     }
-})
+}) 
+    
+export const { editPost, addPost, showPost, deletePost } = postsSlice.actions
 
-export const { editPost, addPost, showPost, deletePost} = postsSlice.actions
-
-export default postsSlice.reducer
+export default postsSlice.reducer 

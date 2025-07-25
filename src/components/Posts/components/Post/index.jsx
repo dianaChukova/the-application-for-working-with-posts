@@ -11,3 +11,4 @@ export const Post = ({post}) => {
         </SC.Post>
     )
 }
+
