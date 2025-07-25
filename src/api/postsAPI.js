@@ -1,35 +1,52 @@
+const deletedPostIds = new Set()
+
 export const postsAPI = {
-    fetchPosts() {
+    async fetchPosts() {
         try {
-            return fetch('https://jsonplaceholder.typicode.com/posts?_sort=id&_order=desc&_limit=3')
-                .then(response => response.json())
-                .then((posts) => posts)
+            const response = await fetch('https://jsonplaceholder.typicode.com/posts?_sort=id&_order=desc&_limit=20')
+            const posts = await response.json()
+            return posts.filter(post => !deletedPostIds.has(post.id))
         } catch (ex) {
-            console.log(ex)
+            console.error('Fetch posts error:', ex)
+            throw ex
         }
     },
 
-    fetchById (id) {
+    async fetchById(id) {
         try {
-            if (!id) {
-                throw new Error('нерабочий id')
+            if (!id) throw new Error('Invalid ID')
+            
+            if (deletedPostIds.has(id)) {
+                throw new Error('Post was deleted')
             }
 
-            return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
-                .then(response => response.json())
-                .then((post) => post)
+            const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
+            return await response.json()
         } catch (ex) {
-            console.log(ex)
+            console.error('Fetch by ID error:', ex)
+            throw ex
         }
     },
     
-    fetchFreshPosts (limit = 3) {
+    async fetchFreshPosts(limit = 20) {
         try {
-            return fetch(`https://jsonplaceholder.typicode.com/posts?_limit=${limit}&_sort=id&_order=desc`)
-                .then(response => response.json())
-                .then((posts) => posts)
+            const response = await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=${limit}&_sort=id&_order=desc`)
+            const posts = await response.json() 
+            return posts.filter(post => !deletedPostIds.has(post.id))
         } catch (ex) {
-            console.log(ex)
+            console.error('Fetch fresh posts error:', ex)
+            throw ex
         }
+    },
+
+    deletePost(id) {
+        deletedPostIds.add(id)
+        return Promise.resolve()
     }
 }
+
+
+
+
+
+ 

@@ -27,10 +27,9 @@ export const DetailPostPage = () => {
 
     const showEditAndDeleteBtn = list && user
 
-    const onDeletePost = () => {
-        setPostForDelete(null)
-        dispatch(deletePost(postForDelete))
-
+    const onDeletePost = (postId) => {
+        dispatch(deletePost({ id: postId }))
+        dispatch(showPost(null))
         navigate('/posts')
     }
 
@@ -66,7 +65,7 @@ export const DetailPostPage = () => {
                     <ModalText>Вы уверены, что хотите удалить этот пост (id-{postForDelete.id})?</ModalText>
                     <ModalContent>
                         <Button onClick={() => setPostForDelete(null)}>Нет</Button>
-                        <SC.DeleteButton onClick={onDeletePost}>Да</SC.DeleteButton>
+                        <SC.DeleteButton  onClick={() => onDeletePost(postForDelete.id)}>Да</SC.DeleteButton>
                     </ModalContent>
                 </Modal>
             </ModalWrapper>
